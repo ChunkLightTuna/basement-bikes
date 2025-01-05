@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.basementbikes'
+    namespace 'ch.oeleri.basementbikes'
     defaultConfig {
-        applicationId 'com.anonymous.basementbikes'
+        applicationId 'ch.oeleri.basementbikes'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

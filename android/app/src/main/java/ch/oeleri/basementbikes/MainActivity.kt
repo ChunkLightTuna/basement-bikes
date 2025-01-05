@@ -1,4 +1,4 @@
-package com.anonymous.basementbikes
+package ch.oeleri.basementbikes
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

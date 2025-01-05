@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>myapp</string>
-          <string>com.anonymous.basementbikes</string>
+          <string>ch.oeleri.basementbikes</string>
         </array>
       </dict>
     </array>

@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.basementbikes"
+      "bundleIdentifier": "ch.oeleri.basementbikes"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "android.permission.BLUETOOTH_ADMIN",
         "android.permission.BLUETOOTH_CONNECT"
       ],
-      "package": "com.anonymous.basementbikes"
+      "package": "ch.oeleri.basementbikes"
     },
     "web": {
       "bundler": "metro",

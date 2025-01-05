@@ -32,7 +32,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.anonymous.basementbikes"/>
+        <data android:scheme="ch.oeleri.basementbikes"/>
       </intent-filter>
     </activity>
   </application>
