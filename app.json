@@ -54,6 +54,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3eafc8c0-bc16-48e9-a04b-b52b981bd61a"
+      }
+    },
+    "owner": "oelerich"
   }
 }
