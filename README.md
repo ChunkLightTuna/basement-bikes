@@ -8,6 +8,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    ```bash
    npx expo install react-native-ble-plx
+   npm install -g eas-cli
    npm install
    ```
 
@@ -16,6 +17,17 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
     npx expo start
    ```
+BLE Instructions:
+https://expo.dev/blog/how-to-build-a-bluetooth-low-energy-powered-expo-app
+
+CI/CD instructions:
+https://docs.expo.dev/build/setup/
+
+Zeroconf instructions:
+https://www.npmjs.com/package/react-native-zeroconf
+
+Peer to peer instructions:
+https://medium.com/nerd-for-tech/peer-to-peer-chat-app-using-webrtc-and-react-native-6c15759f92ec
 
 In the output, you'll find options to open the app in a
 
