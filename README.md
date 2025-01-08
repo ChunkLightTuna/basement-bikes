@@ -8,6 +8,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    ```bash
    npx expo install react-native-ble-plx
+   npx expo install expo-dev-client
    npm install -g eas-cli
    npm install
    ```
