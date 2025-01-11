@@ -1,33 +1,9 @@
 // Convert base64 to ArrayBuffer/DataView
 import {fullUUID} from "react-native-ble-plx";
+import {base64ToDataView, getUint24} from "@/components/functions";
 
-export const base64ToDataView = (base64: string) => {
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return new DataView(bytes.buffer);
-};
 
-// Helper function to read 24-bit integers
-const getUint24 = (dataView: DataView, offset: number, littleEndian: boolean): number => {
-    if (littleEndian) {
-        return (
-            dataView.getUint8(offset) |
-            (dataView.getUint8(offset + 1) << 8) |
-            (dataView.getUint8(offset + 2) << 16)
-        );
-    } else {
-        return (
-            (dataView.getUint8(offset) << 16) |
-            (dataView.getUint8(offset + 1) << 8) |
-            dataView.getUint8(offset + 2)
-        );
-    }
-};
 
-export const uuid_equals = (a: string, b: string) => fullUUID(a) == fullUUID(b)
 
 // Parse the cycling power measurement
 export const parseCyclingPowerMeasurement = (value: string | null | undefined) => {

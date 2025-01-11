@@ -1,364 +1,290 @@
-{
-  "uuids": [
-    {
-      "uuid": "c0f4013a-a837-4165-bab9-654ef70747c6",
-      "name": "CycleOps",
-      "id": ""
-    },
-    {
-      "uuid": "1800",
-      "name": "GAP",
-      "id": "org.bluetooth.service.gap"
-    },
-    {
-      "uuid": "1801",
-      "name": "GATT",
-      "id": "org.bluetooth.service.gatt"
-    },
-    {
-      "uuid": "1802",
-      "name": "Immediate Alert",
-      "id": "org.bluetooth.service.immediate_alert"
-    },
-    {
-      "uuid": "1803",
-      "name": "Link Loss",
-      "id": "org.bluetooth.service.link_loss"
-    },
-    {
-      "uuid": "1804",
-      "name": "Tx Power",
-      "id": "org.bluetooth.service.tx_power"
-    },
-    {
-      "uuid": "1805",
-      "name": "Current Time",
-      "id": "org.bluetooth.service.current_time"
-    },
-    {
-      "uuid": "1806",
-      "name": "Reference Time Update",
-      "id": "org.bluetooth.service.reference_time_update"
-    },
-    {
-      "uuid": "1807",
-      "name": "Next DST Change",
-      "id": "org.bluetooth.service.next_dst_change"
-    },
-    {
-      "uuid": "1808",
-      "name": "Glucose",
-      "id": "org.bluetooth.service.glucose"
-    },
-    {
-      "uuid": "1809",
-      "name": "Health Thermometer",
-      "id": "org.bluetooth.service.health_thermometer"
-    },
-    {
-      "uuid": "180A",
-      "name": "Device Information",
-      "id": "org.bluetooth.service.device_information"
-    },
-    {
-      "uuid": "180D",
-      "name": "Heart Rate",
-      "id": "org.bluetooth.service.heart_rate"
-    },
-    {
-      "uuid": "180E",
-      "name": "Phone Alert Status",
-      "id": "org.bluetooth.service.phone_alert_status"
-    },
-    {
-      "uuid": "180F",
-      "name": "Battery",
-      "id": "org.bluetooth.service.battery_service"
-    },
-    {
-      "uuid": "1810",
-      "name": "Blood Pressure",
-      "id": "org.bluetooth.service.blood_pressure"
-    },
-    {
-      "uuid": "1811",
-      "name": "Alert Notification",
-      "id": "org.bluetooth.service.alert_notification"
-    },
-    {
-      "uuid": "1812",
-      "name": "Human Interface Device",
-      "id": "org.bluetooth.service.human_interface_device"
-    },
-    {
-      "uuid": "1813",
-      "name": "Scan Parameters",
-      "id": "org.bluetooth.service.scan_parameters"
-    },
-    {
-      "uuid": "1814",
-      "name": "Running Speed and Cadence",
-      "id": "org.bluetooth.service.running_speed_and_cadence"
-    },
-    {
-      "uuid": "1815",
-      "name": "Automation IO",
-      "id": "org.bluetooth.service.automation_io"
-    },
-    {
-      "uuid": "1816",
-      "name": "Cycling Speed and Cadence",
-      "id": "org.bluetooth.service.cycling_speed_and_cadence"
-    },
-    {
-      "uuid": "1818",
-      "name": "Cycling Power",
-      "id": "org.bluetooth.service.cycling_power"
-    },
-    {
-      "uuid": "1819",
-      "name": "Location and Navigation",
-      "id": "org.bluetooth.service.location_and_navigation"
-    },
-    {
-      "uuid": "181A",
-      "name": "Environmental Sensing",
-      "id": "org.bluetooth.service.environmental_sensing"
-    },
-    {
-      "uuid": "181B",
-      "name": "Body Composition",
-      "id": "org.bluetooth.service.body_composition"
-    },
-    {
-      "uuid": "181C",
-      "name": "User Data",
-      "id": "org.bluetooth.service.user_data"
-    },
-    {
-      "uuid": "181D",
-      "name": "Weight Scale",
-      "id": "org.bluetooth.service.weight_scale"
-    },
-    {
-      "uuid": "181E",
-      "name": "Bond Management",
-      "id": "org.bluetooth.service.bond_management"
-    },
-    {
-      "uuid": "181F",
-      "name": "Continuous Glucose Monitoring",
-      "id": "org.bluetooth.service.continuous_glucose_monitoring"
-    },
-    {
-      "uuid": "1820",
-      "name": "Internet Protocol Support",
-      "id": "org.bluetooth.service.internet_protocol_support"
-    },
-    {
-      "uuid": "1821",
-      "name": "Indoor Positioning",
-      "id": "org.bluetooth.service.indoor_positioning"
-    },
-    {
-      "uuid": "1822",
-      "name": "Pulse Oximeter",
-      "id": "org.bluetooth.service.pulse_oximeter"
-    },
-    {
-      "uuid": "1823",
-      "name": "HTTP Proxy",
-      "id": "org.bluetooth.service.http_proxy"
-    },
-    {
-      "uuid": "1824",
-      "name": "Transport Discovery",
-      "id": "org.bluetooth.service.transport_discovery"
-    },
-    {
-      "uuid": "1825",
-      "name": "Object Transfer",
-      "id": "org.bluetooth.service.object_transfer"
-    },
-    {
-      "uuid": "1826",
-      "name": "Fitness Machine",
-      "id": "org.bluetooth.service.fitness_machine"
-    },
-    {
-      "uuid": "1827",
-      "name": "Mesh Provisioning",
-      "id": "org.bluetooth.service.mesh_provisioning"
-    },
-    {
-      "uuid": "1828",
-      "name": "Mesh Proxy",
-      "id": "org.bluetooth.service.mesh_proxy"
-    },
-    {
-      "uuid": "1829",
-      "name": "Reconnection Configuration",
-      "id": "org.bluetooth.service.reconnection_configuration"
-    },
-    {
-      "uuid": "183A",
-      "name": "Insulin Delivery",
-      "id": "org.bluetooth.service.insulin_delivery"
-    },
-    {
-      "uuid": "183B",
-      "name": "Binary Sensor",
-      "id": "org.bluetooth.service.binary_sensor"
-    },
-    {
-      "uuid": "183C",
-      "name": "Emergency Configuration",
-      "id": "org.bluetooth.service.emergency_configuration"
-    },
-    {
-      "uuid": "183D",
-      "name": "Authorization Control",
-      "id": "org.bluetooth.service.authorization_control"
-    },
-    {
-      "uuid": "183E",
-      "name": "Physical Activity Monitor",
-      "id": "org.bluetooth.service.physical_activity_monitor"
-    },
-    {
-      "uuid": "183F",
-      "name": "Elapsed Time",
-      "id": "org.bluetooth.service.elapsed_time"
-    },
-    {
-      "uuid": "1840",
-      "name": "Generic Health Sensor",
-      "id": "org.bluetooth.service.generic_health_sensor"
-    },
-    {
-      "uuid": "1843",
-      "name": "Audio Input Control",
-      "id": "org.bluetooth.service.audio_input_control"
-    },
-    {
-      "uuid": "1844",
-      "name": "Volume Control",
-      "id": "org.bluetooth.service.volume_control"
-    },
-    {
-      "uuid": "1845",
-      "name": "Volume Offset Control",
-      "id": "org.bluetooth.service.volume_offset"
-    },
-    {
-      "uuid": "1846",
-      "name": "Coordinated Set Identification",
-      "id": "org.bluetooth.service.coordinated_set_identification"
-    },
-    {
-      "uuid": "1847",
-      "name": "Device Time",
-      "id": "org.bluetooth.service.device_time"
-    },
-    {
-      "uuid": "1848",
-      "name": "Media Control",
-      "id": "org.bluetooth.service.media_control"
-    },
-    {
-      "uuid": "1849",
-      "name": "Generic Media Control",
-      "id": "org.bluetooth.service.generic_media_control"
-    },
-    {
-      "uuid": "184A",
-      "name": "Constant Tone Extension",
-      "id": "org.bluetooth.service.constant_tone_extension"
-    },
-    {
-      "uuid": "184B",
-      "name": "Telephone Bearer",
-      "id": "org.bluetooth.service.telephone_bearer"
-    },
-    {
-      "uuid": "184C",
-      "name": "Generic Telephone Bearer",
-      "id": "org.bluetooth.service.generic_telephone_bearer"
-    },
-    {
-      "uuid": "184D",
-      "name": "Microphone Control",
-      "id": "org.bluetooth.service.microphone_control"
-    },
-    {
-      "uuid": "184E",
-      "name": "Audio Stream Control",
-      "id": "org.bluetooth.service.audio_stream_control"
-    },
-    {
-      "uuid": "184F",
-      "name": "Broadcast Audio Scan",
-      "id": "org.bluetooth.service.broadcast_audio_scan"
-    },
-    {
-      "uuid": "1850",
-      "name": "Published Audio Capabilities",
-      "id": "org.bluetooth.service.published_audio_capabilities"
-    },
-    {
-      "uuid": "1851",
-      "name": "Basic Audio Announcement",
-      "id": "org.bluetooth.service.basic_audio_announcement"
-    },
-    {
-      "uuid": "1852",
-      "name": "Broadcast Audio Announcement",
-      "id": "org.bluetooth.service.broadcast_audio_announcement"
-    },
-    {
-      "uuid": "1853",
-      "name": "Common Audio",
-      "id": "org.bluetooth.service.common_audio"
-    },
-    {
-      "uuid": "1854",
-      "name": "Hearing Access",
-      "id": "org.bluetooth.service.hearing_access"
-    },
-    {
-      "uuid": "1855",
-      "name": "Telephony and Media Audio",
-      "id": "org.bluetooth.service.telephony_and_media_audio"
-    },
-    {
-      "uuid": "1856",
-      "name": "Public Broadcast Announcement",
-      "id": "org.bluetooth.service.public_broadcast_announcement"
-    },
-    {
-      "uuid": "1857",
-      "name": "Electronic Shelf Label",
-      "id": "org.bluetooth.service.electronic_shelf_label"
-    },
-    {
-      "uuid": "1858",
-      "name": "Gaming Audio",
-      "id": "org.bluetooth.service.gaming_audio"
-    },
-    {
-      "uuid": "1859",
-      "name": "Mesh Proxy Solicitation",
-      "id": "org.bluetooth.service.mesh_proxy_solicitation"
-    },
-    {
-      "uuid": "185A",
-      "name": "Industrial Measurement Device",
-      "id": "org.bluetooth.service.industrial_measurement_device"
-    },
-    {
-      "uuid": "185B",
-      "name": "Ranging",
-      "id": "org.bluetooth.service.ranging"
-    }
-  ]
-}
+[
+  {
+    "uuid": "c0f4013a-a837-4165-bab9-654ef70747c6",
+    "name": "CycleOps"
+  },
+  {
+    "uuid": "1800",
+    "name": "GAP"
+  },
+  {
+    "uuid": "1801",
+    "name": "GATT"
+  },
+  {
+    "uuid": "1802",
+    "name": "Immediate Alert"
+  },
+  {
+    "uuid": "1803",
+    "name": "Link Loss"
+  },
+  {
+    "uuid": "1804",
+    "name": "Tx Power"
+  },
+  {
+    "uuid": "1805",
+    "name": "Current Time"
+  },
+  {
+    "uuid": "1806",
+    "name": "Reference Time Update"
+  },
+  {
+    "uuid": "1807",
+    "name": "Next DST Change"
+  },
+  {
+    "uuid": "1808",
+    "name": "Glucose"
+  },
+  {
+    "uuid": "1809",
+    "name": "Health Thermometer"
+  },
+  {
+    "uuid": "180A",
+    "name": "Device Information"
+  },
+  {
+    "uuid": "180D",
+    "name": "Heart Rate"
+  },
+  {
+    "uuid": "180E",
+    "name": "Phone Alert Status"
+  },
+  {
+    "uuid": "180F",
+    "name": "Battery"
+  },
+  {
+    "uuid": "1810",
+    "name": "Blood Pressure"
+  },
+  {
+    "uuid": "1811",
+    "name": "Alert Notification"
+  },
+  {
+    "uuid": "1812",
+    "name": "Human Interface Device"
+  },
+  {
+    "uuid": "1813",
+    "name": "Scan Parameters"
+  },
+  {
+    "uuid": "1814",
+    "name": "Running Speed and Cadence"
+  },
+  {
+    "uuid": "1815",
+    "name": "Automation IO"
+  },
+  {
+    "uuid": "1816",
+    "name": "Cycling Speed and Cadence"
+  },
+  {
+    "uuid": "1818",
+    "name": "Cycling Power"
+  },
+  {
+    "uuid": "1819",
+    "name": "Location and Navigation"
+  },
+  {
+    "uuid": "181A",
+    "name": "Environmental Sensing"
+  },
+  {
+    "uuid": "181B",
+    "name": "Body Composition"
+  },
+  {
+    "uuid": "181C",
+    "name": "User Data"
+  },
+  {
+    "uuid": "181D",
+    "name": "Weight Scale"
+  },
+  {
+    "uuid": "181E",
+    "name": "Bond Management"
+  },
+  {
+    "uuid": "181F",
+    "name": "Continuous Glucose Monitoring"
+  },
+  {
+    "uuid": "1820",
+    "name": "Internet Protocol Support"
+  },
+  {
+    "uuid": "1821",
+    "name": "Indoor Positioning"
+  },
+  {
+    "uuid": "1822",
+    "name": "Pulse Oximeter"
+  },
+  {
+    "uuid": "1823",
+    "name": "HTTP Proxy"
+  },
+  {
+    "uuid": "1824",
+    "name": "Transport Discovery"
+  },
+  {
+    "uuid": "1825",
+    "name": "Object Transfer"
+  },
+  {
+    "uuid": "1826",
+    "name": "Fitness Machine"
+  },
+  {
+    "uuid": "1827",
+    "name": "Mesh Provisioning"
+  },
+  {
+    "uuid": "1828",
+    "name": "Mesh Proxy"
+  },
+  {
+    "uuid": "1829",
+    "name": "Reconnection Configuration"
+  },
+  {
+    "uuid": "183A",
+    "name": "Insulin Delivery"
+  },
+  {
+    "uuid": "183B",
+    "name": "Binary Sensor"
+  },
+  {
+    "uuid": "183C",
+    "name": "Emergency Configuration"
+  },
+  {
+    "uuid": "183D",
+    "name": "Authorization Control"
+  },
+  {
+    "uuid": "183E",
+    "name": "Physical Activity Monitor"
+  },
+  {
+    "uuid": "183F",
+    "name": "Elapsed Time"
+  },
+  {
+    "uuid": "1840",
+    "name": "Generic Health Sensor"
+  },
+  {
+    "uuid": "1843",
+    "name": "Audio Input Control"
+  },
+  {
+    "uuid": "1844",
+    "name": "Volume Control"
+  },
+  {
+    "uuid": "1845",
+    "name": "Volume Offset Control"
+  },
+  {
+    "uuid": "1846",
+    "name": "Coordinated Set Identification"
+  },
+  {
+    "uuid": "1847",
+    "name": "Device Time"
+  },
+  {
+    "uuid": "1848",
+    "name": "Media Control"
+  },
+  {
+    "uuid": "1849",
+    "name": "Generic Media Control"
+  },
+  {
+    "uuid": "184A",
+    "name": "Constant Tone Extension"
+  },
+  {
+    "uuid": "184B",
+    "name": "Telephone Bearer"
+  },
+  {
+    "uuid": "184C",
+    "name": "Generic Telephone Bearer"
+  },
+  {
+    "uuid": "184D",
+    "name": "Microphone Control"
+  },
+  {
+    "uuid": "184E",
+    "name": "Audio Stream Control"
+  },
+  {
+    "uuid": "184F",
+    "name": "Broadcast Audio Scan"
+  },
+  {
+    "uuid": "1850",
+    "name": "Published Audio Capabilities"
+  },
+  {
+    "uuid": "1851",
+    "name": "Basic Audio Announcement"
+  },
+  {
+    "uuid": "1852",
+    "name": "Broadcast Audio Announcement"
+  },
+  {
+    "uuid": "1853",
+    "name": "Common Audio"
+  },
+  {
+    "uuid": "1854",
+    "name": "Hearing Access"
+  },
+  {
+    "uuid": "1855",
+    "name": "Telephony and Media Audio"
+  },
+  {
+    "uuid": "1856",
+    "name": "Public Broadcast Announcement"
+  },
+  {
+    "uuid": "1857",
+    "name": "Electronic Shelf Label"
+  },
+  {
+    "uuid": "1858",
+    "name": "Gaming Audio"
+  },
+  {
+    "uuid": "1859",
+    "name": "Mesh Proxy Solicitation"
+  },
+  {
+    "uuid": "185A",
+    "name": "Industrial Measurement Device"
+  },
+  {
+    "uuid": "185B",
+    "name": "Ranging"
+  }
+]
