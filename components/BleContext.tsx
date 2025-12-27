@@ -14,19 +14,18 @@ interface BleContextType {
     updateConnectionState: (deviceId: string, state: ConnectionState) => void;
     scanning: boolean;
     stopScan: () => void;
-    startScan: (services: string[]) => Promise<void>;
-    devices: Map<string, Device>;
+    startScan: (services: string[], setDevices: React.Dispatch<React.SetStateAction<Devices>>) => void;
     toggleDeviceConnection: (device: Device, connectToDevice: (device: Device) => Promise<void>) => Promise<void>;
 }
 
 const BleContext = createContext<BleContextType | undefined>(undefined);
 
+export type Devices = { [deviceId: string]: Device };
 export const BleProvider = ({children}: { children: ReactNode }) => {
     const [manager] = useState(() => new BleManager());
     const [connectionStates, setConnectionStates] = useState<DeviceConnectionState>({});
     const [bikeTrainer, setBikeTrainer] = useState<BikeTrainer | null>(null);
     const [scanning, setScanning] = useState(false)
-    const [devices, setDevices] = useState<Map<string, Device>>(new Map())
 
     const updateConnectionState = (deviceId: string, state: ConnectionState) => {
         setConnectionStates(prev => ({...prev, [deviceId]: state}));
@@ -56,18 +55,17 @@ export const BleProvider = ({children}: { children: ReactNode }) => {
     }
 
 
-    const startScan = async (services: string[]) => {
+    const startScan = async (services: string[], setDevices: React.Dispatch<React.SetStateAction<Devices>>) => {
         const hasPermission = await requestPermissions()
         if (!hasPermission) return
 
         setScanning(true)
         resetConnectionStates()
-        setDevices(new Map())
-
+        setDevices({})
 
         manager.startDeviceScan(
             services,
-            {allowDuplicates: false},
+            {allowDuplicates: true},
             (error, device) => {
                 if (error) {
                     console.log('Scan error:', error)
@@ -76,13 +74,16 @@ export const BleProvider = ({children}: { children: ReactNode }) => {
                 }
 
                 if (device) {
-                    setDevices(prevDevices => {
-                        const newDevices = new Map(prevDevices)
-                        newDevices.set(device.id, device)
-                        return newDevices
+                    setDevices(prev =>
+                        prev[device.id]?.rssi === device.rssi ? prev : {
+                            ...prev,
+                            [device.id]: device
+                        }
+                    )
+                    setConnectionStates(prev => {
+                        if (prev[device.id] === undefined) checkConnectionState(device)
+                        return prev
                     })
-                    // Check connection state when device is discovered
-                    checkConnectionState(device)
                 }
             }
         )
@@ -141,7 +142,6 @@ export const BleProvider = ({children}: { children: ReactNode }) => {
             scanning,
             stopScan,
             startScan,
-            devices,
             toggleDeviceConnection
         }}>
             {children}

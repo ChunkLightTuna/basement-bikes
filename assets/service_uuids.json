@@ -286,5 +286,13 @@
   {
     "uuid": "185B",
     "name": "Ranging"
+  },
+  {
+    "uuid": "00000001-19ca-4651-86e5-fa29dcdd09d1",
+    "name": "Zwift Play Service"
+  },
+  {
+    "uuid": "FC82",
+    "name": "Zwift Play Service (new)"
   }
 ]

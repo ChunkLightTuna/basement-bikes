@@ -1890,5 +1890,21 @@
   {
     "uuid": "2C19",
     "name": "Ranging Data Overwritten"
+  },
+  {
+    "uuid": "00000002-19ca-4651-86e5-fa29dcdd09d1",
+    "name": "Zwift Measurement"
+  },
+  {
+    "uuid": "00000003-19ca-4651-86e5-fa29dcdd09d1",
+    "name": "Zwift Control Point"
+  },
+  {
+    "uuid": "00000004-19ca-4651-86e5-fa29dcdd09d1",
+    "name": "Zwift Command Response"
+  },
+  {
+    "uuid": "00000006-19ca-4651-86e5-fa29dcdd09d1",
+    "name": "Zwift Unused?"
   }
 ]

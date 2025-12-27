@@ -1,29 +1,25 @@
 /* eslint-disable no-bitwise */
-import React, {useState} from "react"
+import React, {useMemo, useState} from "react"
 import {Button, FlatList} from 'react-native'
 
-import {Characteristic, Device,} from "react-native-ble-plx"
+import {BleError, Characteristic, Device, fullUUID, Service,} from "react-native-ble-plx"
 import {ThemedText} from "@/components/ThemedText"
 import {ThemedView} from "@/components/ThemedView"
 import c_uuids from "@/assets/characteristic_uuids.json"
-import s_uuids from "@/assets/service_uuids.json"
 import {ConnectionState} from "@/components/ConnectionState"
-import {NEW_ZWIFT_SERVICE_UUID, OLD_ZWIFT_SERVICE_UUID, ZWIFT_CONTROL_POINT} from "@/components/Bluetooth_UUIDS";
+import {
+    BATTERY_LEVEL,
+    BATTERY_SERVICE_UUID,
+    ZWIFT_CONTROL_POINT_SERVICE,
+    ZWIFT_SERVICE_UUID,
+    ZWIFT_SERVICE_UUID_NEW
+} from "@/components/Bluetooth_UUIDS";
 import {uuid_equals} from "@/components/functions";
-import {ZwiftCryptoService} from "@/components/ZwiftCryptoService";
-import {useBle} from "@/components/BleContext";
+import {RIDE_ON_HEADER, ZwiftCryptoService} from "@/components/ZwiftCryptoService";
+import {Devices, useBle} from "@/components/BleContext";
 
-const SUPPORTED_SERVICES = [
-    OLD_ZWIFT_SERVICE_UUID, NEW_ZWIFT_SERVICE_UUID
-]
-
-interface DeviceListItem {
-    item: [string, Device]
-}
-
-interface DeviceServices {
-    [key: string]: React.JSX.Element[]
-}
+const ZWIFT_SERVICES = [ZWIFT_SERVICE_UUID, ZWIFT_SERVICE_UUID_NEW]
+const SUPPORTED_SERVICES = [...ZWIFT_SERVICES, BATTERY_SERVICE_UUID]
 
 const controllers = () => {
     const {
@@ -33,108 +29,159 @@ const controllers = () => {
         scanning,
         stopScan,
         startScan,
-        devices,
         toggleDeviceConnection
     } = useBle();
-    const [deviceServices, setDeviceServices] = useState<DeviceServices>({})
+    const [deviceCharacteristics, setDeviceCharacteristics] = useState<{ [deviceId: string]: Characteristic[] }>({});
+    const [devices, setDevices] = useState<Devices>({})
 
-    const handleZwiftHandshake = async (device: any) => {
-        const zwiftCrypto = new ZwiftCryptoService();
 
-        // 1. Send Local Public Key to Zwift
-        const localKey = zwiftCrypto.getLocalPublicKeyForDevice();
-        await device.writeCharacteristicWithResponseForService(
-            OLD_ZWIFT_SERVICE_UUID,
-            ZWIFT_CONTROL_POINT,
-            Buffer.from(localKey).toString('base64')
-        );
+    type BatteryState = { [deviceId: string]: number };
+    const [batteryLevels, setBatteryLevel] = useState<BatteryState>({})
 
-        const char = await device.readCharacteristicForService(
-            OLD_ZWIFT_SERVICE_UUID,
-            ZWIFT_CONTROL_POINT
-        );
+    const handleZwiftHandshake = async (service: Service) => {
+        const zwiftCrypto = new ZwiftCryptoService()
+        const localRawKey = zwiftCrypto.getRawLocalPublicKey()
 
-        const deviceKeyRaw = Buffer.from(char.value, 'base64');
+        const handshakePacket = Buffer.concat([RIDE_ON_HEADER, localRawKey])
 
-        const aesKey = await zwiftCrypto.deriveSessionKey(new Uint8Array(deviceKeyRaw));
+        await service.writeCharacteristicWithResponse(
+            ZWIFT_CONTROL_POINT_SERVICE,
+            handshakePacket.toString('base64')
+        )
 
-        console.log("Handshake Complete. AES Key derived:", Buffer.from(aesKey).toString('hex'));
-        return aesKey;
-    };
+        const char = await service.readCharacteristic(ZWIFT_CONTROL_POINT_SERVICE)
+        const responseData = Buffer.from(char.value as string, 'base64')
+        const deviceKeyRaw = responseData.subarray(8, 72)
+        const sessionKey = await zwiftCrypto.deriveSessionKey(new Uint8Array(deviceKeyRaw))
 
+        console.log(
+            "Handshake Complete. Session Key (36 bytes):",
+            Buffer.from(sessionKey).toString('hex')
+        )
+        return sessionKey
+    }
+
+    const set_label = (c: Characteristic) => {
+        const label = c_uuids.find(u => uuid_equals(u.uuid, c.uuid))?.name ?? c.uuid
+        console.log(`LABEL: ${label}`)
+        if (uuid_equals(c.uuid, BATTERY_LEVEL)) {
+            const battery_lvl = batteryLevels[c.deviceID]
+            if (battery_lvl !== undefined) {
+                return `${label} (${battery_lvl}%)`
+            }
+        }
+        return label
+    }
 
     const connectToDevice = async (device: Device) => {
-        updateConnectionState(device.id, ConnectionState.PENDING_CONNECT)
-        const deviceConnection = await manager.connectToDevice(device.id)
-        await deviceConnection.discoverAllServicesAndCharacteristics()
+        updateConnectionState(device.id, ConnectionState.PENDING_CONNECT);
+        const deviceConnection = await manager.connectToDevice(device.id);
+        await deviceConnection.discoverAllServicesAndCharacteristics();
 
         const services = (await device.services())
-            .filter(s => SUPPORTED_SERVICES.some(u => uuid_equals(u, s.uuid)))
+            .filter(s => SUPPORTED_SERVICES.some(u => uuid_equals(u, s.uuid)));
 
-        const service_ids_to_characteristics: { [key: string]: Characteristic[] } =
-            Object.fromEntries(await Promise.all(services.map(async s => {
-                const characteristics = (await s.characteristics())
-                await Promise.all(characteristics.map(async c => {
-                    device.monitorCharacteristicForService(
-                        s.uuid,
-                        c.uuid,
-                        (_, characteristic) => console.log(`${device.name || ''} | ${c_uuids.find(u => uuid_equals(u.uuid, c.uuid))?.name ?? 'UNKNOWN'} | ${characteristic?.uuid.slice(4, 8)}: ${characteristic?.value || ''}`)
-                    )
-                }))
+        const zwift_service = services.find(s => ZWIFT_SERVICES.some(u => uuid_equals(u, s.uuid)))
+        if (zwift_service)
+            await handleZwiftHandshake(zwift_service)
 
-                return [s.id, characteristics]
-            })))
+        if (services.some(s => uuid_equals(s.uuid, BATTERY_SERVICE_UUID))) {
+            const char = await device.readCharacteristicForService(BATTERY_SERVICE_UUID, BATTERY_LEVEL);
+            update_battery_level(char);
+        }
 
+        const allChars: Characteristic[] = [];
+        for (const service of services) {
+            const chars = await service.characteristics();
+            allChars.push(...chars);
 
-        const serviceElements = services.map(s =>
-            <ThemedView key={`${s.id}_view`}>
-                <ThemedText key={`${s.id}_title`} style={{fontSize: 14, fontWeight: 'bold'}}>  {
-                    s_uuids.find(u => uuid_equals(u.uuid, s.uuid))?.name ?? s.uuid
-                }</ThemedText>
-                {service_ids_to_characteristics[s.id].map(c =>
-                    <ThemedText key={c.id}>    {
-                        c_uuids.find(u => uuid_equals(u.uuid, c.uuid))?.name ?? c.uuid
-                    }</ThemedText>
-                )}
-            </ThemedView>
-        )
-        setDeviceServices(prev => ({...prev, [device.id]: serviceElements}))
+            chars.forEach(c => {
+                device.monitorCharacteristicForService(service.uuid, c.uuid, characteristic_listener);
+            });
+        }
+
+        setDeviceCharacteristics(prev => ({...prev, [device.id]: allChars}));
+    };
+
+    const characteristic_listener = (
+        error: BleError | null,
+        characteristic: Characteristic | null
+    ) => {
+        if (error) {
+            console.log(`onDataUpdate: ${error.reason}`)
+            return
+        } else if (!characteristic) {
+            console.log('onDataUpdate: characteristic not found?')
+            return
+        } else {
+            console.log(c_uuids.find(u => uuid_equals(u.uuid, characteristic.uuid))?.name ?? '?characteristic?')
+            console.log(characteristic.uuid.slice(4, 8))
+            console.log(characteristic.value || '?value?')
+        }
+
+        switch (fullUUID(characteristic.uuid)) {
+            case fullUUID(BATTERY_LEVEL):
+                update_battery_level(characteristic)
+                break
+        }
+    }
+
+    const update_battery_level = (c: Characteristic) => {
+        if (c === null || !uuid_equals(c.uuid, BATTERY_LEVEL)) return
+        const battery_lvl = Buffer.from(c.value as string, 'base64').readUInt8(0)
+        setBatteryLevel(prevLevels => ({
+            ...prevLevels,
+            [c.deviceID]: battery_lvl
+        }))
     }
 
     // Render each device
-    const renderDevice = ({item}: DeviceListItem) => {
-        const device = item[1]
+    const renderDevice = (device: Device) => {
+        let name = device.name || 'Unnamed Device'
+        if (device.manufacturerData) {
+            const data = Buffer.from(device.manufacturerData, 'base64');
+            const side_n = data[2];
+            const sideLabels: Record<number, string> = {
+                2: ' Right',
+                3: ' Left',
+                9: ' Click'
+            };
+            name += sideLabels[side_n] ?? '';
+        }
+
+        const chars = deviceCharacteristics[device.id] || [];
 
         return (
             <ThemedView style={{padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc'}}>
-                <ThemedText style={{
-                    fontSize: 16,
-                    fontWeight: connectionStates[device.id] === ConnectionState.CONNECTED ? 'bold' : 'normal'
-                }}>
-                    {device.name || 'Unnamed Device'}
-                </ThemedText>
+                <ThemedText style={{fontSize: 16, fontWeight: 'bold'}}>{name}</ThemedText>
                 <ThemedText>  {device.rssi} dBm</ThemedText>
-                {deviceServices[device.id]}
+                {chars.map(c => (
+                    <ThemedText key={c.id}>  {set_label(c)}</ThemedText>
+                ))}
+
                 <Button
                     title={connectionStates[device.id] ?? 'Connect'}
                     onPress={() => toggleDeviceConnection(device, connectToDevice)}
-                    disabled={connectionStates[device.id] in [ConnectionState.PENDING_CONNECT, ConnectionState.PENDING_DISCONNECT]}
                 />
             </ThemedView>
-        )
+        );
     }
+
+    const sortedData = useMemo(() => {
+        return Object.entries(devices).sort(([, a], [, b]) => (b?.rssi ?? -100) - (a?.rssi ?? -100));
+    }, [devices]);
 
     return (
         <ThemedView style={{flex: 1, padding: 20}}>
             <Button
                 title={'Scan for Controllers'}
-                onPress={scanning ? stopScan : () => startScan(SUPPORTED_SERVICES)}
+                onPress={scanning ? stopScan : () => startScan([ZWIFT_SERVICE_UUID, ZWIFT_SERVICE_UUID_NEW], setDevices)}
                 disabled={scanning}
             />
             <FlatList
-                data={Array.from(devices.entries()).sort(([, a], [, b]) => (b?.rssi ?? -100) - (a?.rssi ?? -100))}
-                renderItem={renderDevice}
-                keyExtractor={([, device], index) => `${device.id}_${index}`}
+                data={sortedData}
+                renderItem={({item: [, device]}) => renderDevice(device)}
+                keyExtractor={([id]) => id}
                 ListEmptyComponent={
                     <ThemedText style={{textAlign: 'center', marginTop: 20}}>
                         {scanning ? 'Scanning...' : ''}
@@ -144,6 +191,5 @@ const controllers = () => {
         </ThemedView>
     )
 }
-
 
 export default controllers

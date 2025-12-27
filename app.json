@@ -11,10 +11,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ch.oeleri.basementbikes",
+      "associatedDomains": ["applinks:basementbikes.oeleri.ch"],
       "buildNumber": "1",
+      "userInterfaceStyle": "automatic",
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "Allow $(PRODUCT_NAME) to connect to bluetooth devices",
-        "NSBluetoothPeripheralUsageDescription": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
+        "NSBluetoothPeripheralUsageDescription": "Allow $(PRODUCT_NAME) to connect to bluetooth devices",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

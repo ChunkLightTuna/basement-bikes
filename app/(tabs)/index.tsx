@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
-import React, {useState} from "react"
+import React, {useMemo, useState} from "react"
 import {Button, FlatList} from 'react-native'
-import {useBle} from "@/components/BleContext";
+import {Devices, useBle} from "@/components/BleContext";
 import {BleError, Characteristic, Device, fullUUID,} from "react-native-ble-plx"
 import {ThemedText} from "@/components/ThemedText"
 import {ThemedView} from "@/components/ThemedView"
@@ -20,6 +20,9 @@ import {
 } from "@/components/Bluetooth_UUIDS";
 import {uuid_equals} from "@/components/functions";
 
+import {Buffer} from 'buffer';
+
+global.Buffer = Buffer;
 
 const SUPPORTED_SERVICES = [
     FITNESS_MACHINE_SERVICE,
@@ -52,18 +55,26 @@ const index = () => {
         scanning,
         stopScan,
         startScan,
-        devices,
         toggleDeviceConnection
     } = useBle();
     const [deviceServices, setDeviceServices] = useState<DeviceServices>({})
     const [deviceWattage, setDeviceWattage] = useState<DeviceWattage>({})
 
+    const [devices, setDevices] = useState<Devices>({})
 
     const onDataUpdateWithName = (device_name: string | null, characteristic_name: string | undefined) => {
         return (
             error: BleError | null,
             characteristic: Characteristic | null
         ) => {
+            if (error) {
+                console.log(`onDataUpdateWithName: ${error.reason}`)
+                return
+            } else if (!characteristic) {
+                console.log('onDataUpdateWithName: characteristic not found?')
+                return
+            }
+
             let value = characteristic?.value || ''
 
             switch (fullUUID(characteristic?.uuid || '')) {
@@ -137,9 +148,7 @@ const index = () => {
     }
 
     // Render each device
-    const renderDevice = ({item}: DeviceListItem) => {
-        const device = item[1]
-
+    const renderDevice = (device: Device) => {
         return (
             <ThemedView style={{padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc'}}>
                 <ThemedText style={{
@@ -164,17 +173,21 @@ const index = () => {
         )
     }
 
+    const sortedData = useMemo(() => {
+        return Object.entries(devices).sort(([, a], [, b]) => (b?.rssi ?? -100) - (a?.rssi ?? -100));
+    }, [devices]);
+
     return (
         <ThemedView style={{flex: 1, padding: 20}}>
             <Button
                 title={'Scan for Bike Trainers'}
-                onPress={scanning ? stopScan : () => startScan(SUPPORTED_SERVICES)}
+                onPress={scanning ? stopScan : () => startScan(SUPPORTED_SERVICES, setDevices)}
                 disabled={scanning}
             />
             <FlatList
-                data={Array.from(devices.entries()).sort(([, a], [, b]) => (b?.rssi ?? -100) - (a?.rssi ?? -100))}
-                renderItem={renderDevice}
-                keyExtractor={([, device], index) => `${device.id}_${index}`}
+                data={sortedData}
+                renderItem={({item: [, device]}) => renderDevice(device)}
+                keyExtractor={([id]) => id}
                 ListEmptyComponent={
                     <ThemedText style={{textAlign: 'center', marginTop: 20}}>
                         {scanning ? 'Scanning...' : ''}
