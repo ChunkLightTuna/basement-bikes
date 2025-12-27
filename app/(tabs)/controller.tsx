@@ -1,54 +1,35 @@
 /* eslint-disable no-bitwise */
 import React, {useState} from "react"
 import {Button, FlatList} from 'react-native'
-import {useBle} from "@/components/BleContext";
-import {BleError, Characteristic, Device, fullUUID,} from "react-native-ble-plx"
+
+import {Characteristic, Device,} from "react-native-ble-plx"
 import {ThemedText} from "@/components/ThemedText"
 import {ThemedView} from "@/components/ThemedView"
-import {parseCyclingPowerMeasurement, parseIndoorBikeData} from "@/components/CyclePower"
-import {CYCLEOPS_CONTROL_POINT, CYCLEOPS_SERVICE, CycleOpsService} from "@/components/CycleOpsService"
 import c_uuids from "@/assets/characteristic_uuids.json"
 import s_uuids from "@/assets/service_uuids.json"
 import {ConnectionState} from "@/components/ConnectionState"
-import {BikeTrainer} from "@/components/BikeTrainer";
-import {
-    CYCLING_POWER_MEASUREMENT,
-    CYCLING_POWER_SERVICE,
-    CYCLING_SPEED_AND_CADENCE_SERVICE,
-    FITNESS_MACHINE_SERVICE,
-    INDOOR_BIKE_DATA
-} from "@/components/Bluetooth_UUIDS";
+import {NEW_ZWIFT_SERVICE_UUID, OLD_ZWIFT_SERVICE_UUID, ZWIFT_CONTROL_POINT} from "@/components/Bluetooth_UUIDS";
 import {uuid_equals} from "@/components/functions";
-
+import {ZwiftCryptoService} from "@/components/ZwiftCryptoService";
+import {useBle} from "@/components/BleContext";
 
 const SUPPORTED_SERVICES = [
-    FITNESS_MACHINE_SERVICE,
-    CYCLING_POWER_SERVICE,
-    CYCLING_SPEED_AND_CADENCE_SERVICE,
-    CYCLEOPS_SERVICE
+    OLD_ZWIFT_SERVICE_UUID, NEW_ZWIFT_SERVICE_UUID
 ]
 
 interface DeviceListItem {
     item: [string, Device]
 }
 
-interface DeviceWattage {
-    [key: string]: number
-}
-
 interface DeviceServices {
     [key: string]: React.JSX.Element[]
 }
 
-// export let SharedContext: Context<BikeTrainer>
-
-const index = () => {
+const controllers = () => {
     const {
         manager,
         connectionStates,
         updateConnectionState,
-        bikeTrainer,
-        setBikeTrainer,
         scanning,
         stopScan,
         startScan,
@@ -56,34 +37,30 @@ const index = () => {
         toggleDeviceConnection
     } = useBle();
     const [deviceServices, setDeviceServices] = useState<DeviceServices>({})
-    const [deviceWattage, setDeviceWattage] = useState<DeviceWattage>({})
 
+    const handleZwiftHandshake = async (device: any) => {
+        const zwiftCrypto = new ZwiftCryptoService();
 
-    const onDataUpdateWithName = (device_name: string | null, characteristic_name: string | undefined) => {
-        return (
-            error: BleError | null,
-            characteristic: Characteristic | null
-        ) => {
-            let value = characteristic?.value || ''
+        // 1. Send Local Public Key to Zwift
+        const localKey = zwiftCrypto.getLocalPublicKeyForDevice();
+        await device.writeCharacteristicWithResponseForService(
+            OLD_ZWIFT_SERVICE_UUID,
+            ZWIFT_CONTROL_POINT,
+            Buffer.from(localKey).toString('base64')
+        );
 
-            switch (fullUUID(characteristic?.uuid || '')) {
-                case fullUUID(CYCLING_POWER_MEASUREMENT): // Cycling Power Measurement
-                    const cyclingPowerMeasurement = parseCyclingPowerMeasurement(characteristic?.value)
-                    if (characteristic?.deviceID) {
-                        setDeviceWattage(prev => ({
-                            ...prev, [characteristic.deviceID]: cyclingPowerMeasurement.power
-                        }))
-                    }
-                    value = JSON.stringify(cyclingPowerMeasurement)
-                    break
-                case fullUUID(INDOOR_BIKE_DATA): // Indoor Bike Data
-                    value = JSON.stringify(parseIndoorBikeData(characteristic?.value))
-                    break
-            }
+        const char = await device.readCharacteristicForService(
+            OLD_ZWIFT_SERVICE_UUID,
+            ZWIFT_CONTROL_POINT
+        );
 
-            console.log(`${device_name || ''} | ${characteristic_name || ''} | ${characteristic?.uuid.slice(4, 8)}: ${value}`)
-        }
-    }
+        const deviceKeyRaw = Buffer.from(char.value, 'base64');
+
+        const aesKey = await zwiftCrypto.deriveSessionKey(new Uint8Array(deviceKeyRaw));
+
+        console.log("Handshake Complete. AES Key derived:", Buffer.from(aesKey).toString('hex'));
+        return aesKey;
+    };
 
 
     const connectToDevice = async (device: Device) => {
@@ -97,23 +74,11 @@ const index = () => {
         const service_ids_to_characteristics: { [key: string]: Characteristic[] } =
             Object.fromEntries(await Promise.all(services.map(async s => {
                 const characteristics = (await s.characteristics())
-                // .filter(c =>
-                //     c_uuids.some(u =>
-                //         uuid_equals(u.uuid, c.uuid)
-                //     ))
                 await Promise.all(characteristics.map(async c => {
-                    if (uuid_equals(c.uuid, CYCLEOPS_CONTROL_POINT)) {
-                        const cos: BikeTrainer = new CycleOpsService(manager, device, c, updateConnectionState)
-                        // SharedContext = createContext(cos);
-                        setBikeTrainer(cos)
-                    }
                     device.monitorCharacteristicForService(
                         s.uuid,
                         c.uuid,
-                        onDataUpdateWithName(
-                            device.name,
-                            c_uuids.find(u => uuid_equals(u.uuid, c.uuid))?.name ?? 'UNKNOWN'
-                        )
+                        (_, characteristic) => console.log(`${device.name || ''} | ${c_uuids.find(u => uuid_equals(u.uuid, c.uuid))?.name ?? 'UNKNOWN'} | ${characteristic?.uuid.slice(4, 8)}: ${characteristic?.value || ''}`)
                     )
                 }))
 
@@ -149,16 +114,11 @@ const index = () => {
                     {device.name || 'Unnamed Device'}
                 </ThemedText>
                 <ThemedText>  {device.rssi} dBm</ThemedText>
-                <ThemedText>  {deviceWattage[device.id] || '0'} watts</ThemedText>
                 {deviceServices[device.id]}
                 <Button
                     title={connectionStates[device.id] ?? 'Connect'}
                     onPress={() => toggleDeviceConnection(device, connectToDevice)}
                     disabled={connectionStates[device.id] in [ConnectionState.PENDING_CONNECT, ConnectionState.PENDING_DISCONNECT]}
-                />
-                <Button
-                    title={'SET POWER TO 100'} onPress={() => bikeTrainer!.target_power = 100}
-                    disabled={!bikeTrainer}
                 />
             </ThemedView>
         )
@@ -167,7 +127,7 @@ const index = () => {
     return (
         <ThemedView style={{flex: 1, padding: 20}}>
             <Button
-                title={'Scan for Bike Trainers'}
+                title={'Scan for Controllers'}
                 onPress={scanning ? stopScan : () => startScan(SUPPORTED_SERVICES)}
                 disabled={scanning}
             />
@@ -186,4 +146,4 @@ const index = () => {
 }
 
 
-export default index
+export default controllers

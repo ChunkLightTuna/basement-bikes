@@ -21,9 +21,9 @@ export interface Msg {
 }
 
 
-async function WCPS(cyclingPowerService: Service, onData: ((s: String) => void)) {
+async function WCPS(cyclingPowerService: Service, onData: ((s: string) => void)) {
     const characteristic = await cyclingPowerService.characteristics()
-        .then(cs => cs.find(c => c.uuid == WAHOO_EXTENSION)!)
+        .then(cs => cs.find(c => c.uuid === WAHOO_EXTENSION)!)
 
 
     // config
@@ -146,29 +146,23 @@ async function WCPS(cyclingPowerService: Service, onData: ((s: String) => void))
     async function requestControl() {
         const control = service.characteristics.control;
 
-        const res = await control.write(controlParser.requestControl.encode());
-
-        return res;
+        return await control.write(controlParser.requestControl.encode());
     }
 
     async function setWindResistance() {
         const control = service.characteristics.control;
 
-        const res = await control.write(controlParser.windSpeed.encode({windSpeed: 0}));
-
-        return res;
+        return await control.write(controlParser.windSpeed.encode({windSpeed: 0}));
     }
 
     async function setWheelCircumference() {
         const control = service.characteristics.control;
 
-        const res = await control.write(
+        return await control.write(
             controlParser.wheelCircumference.encode({
                 circumference: controlParser.wheelCircumference.definitions.circumference.default,
             })
         );
-
-        return res;
     }
 
     // end methods

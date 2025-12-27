@@ -18,7 +18,7 @@ export class CycleOpsService implements BikeTrainer {
     private readonly controlPoint
     private readonly device
 
-    public constructor(manager: BleManager, device: Device, controlPoint: Characteristic, onDisconnect: (d: Device, s: ConnectionState) => void) {
+    public constructor(manager: BleManager, device: Device, controlPoint: Characteristic, onDisconnect: (device_id: string, s: ConnectionState) => void) {
         if (!uuid_equals(controlPoint.uuid, CYCLEOPS_CONTROL_POINT)) {
             throw "Invalid Characteristic uuid";
         }
@@ -27,7 +27,7 @@ export class CycleOpsService implements BikeTrainer {
 
         manager.onDeviceDisconnected(device.id, (() => {
             this.stopTargetWattInterval()
-            onDisconnect(device, ConnectionState.DISCONNECTED)
+            onDisconnect(device.id, ConnectionState.DISCONNECTED)
         }))
         device.monitorCharacteristicForService(
             CYCLEOPS_SERVICE,

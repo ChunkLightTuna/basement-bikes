@@ -137,15 +137,12 @@ function CyclingPowerMeasurement(args = {}) {
     });
 
     const rateAdjuster = RateAdjuster({
-        sensor: 'powerMeter',
-        onDone: function (args.maxRateCount)
-    {
-        cadence.setMaxRateCount(maxRateCount);
-    }
-})
+            sensor: 'powerMeter',
+            onDone: cadence.setMaxRateCount
+        })
     ;
 
-    function decode(dataview) {
+    function decode(dataview: DataView) {
         const byteLength = dataview.byteLength;
 
         return order.reduce(function (acc, fieldName) {
@@ -156,7 +153,7 @@ function CyclingPowerMeasurement(args = {}) {
             if (field.present(acc.flags)) {
                 const value = getField(field, dataview, acc.i);
                 const unit = field.unit;
-                const name = field.short ?? fieldName;
+                const name = fieldName;
 
                 if (acc.i === 0) {
                     acc.flags = value;
@@ -173,7 +170,6 @@ function CyclingPowerMeasurement(args = {}) {
 
                 acc.i += field.size;
             }
-            ;
 
             return acc;
 

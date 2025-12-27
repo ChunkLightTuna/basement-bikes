@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "basement-bikes",
+    "name": "Basement Bikes",
     "slug": "basement-bikes",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,7 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ch.oeleri.basementbikes"
+      "bundleIdentifier": "ch.oeleri.basementbikes",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "Allow $(PRODUCT_NAME) to connect to bluetooth devices",
+        "NSBluetoothPeripheralUsageDescription": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
+      }
     },
     "android": {
       "adaptiveIcon": {

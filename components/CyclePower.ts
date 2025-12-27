@@ -1,8 +1,5 @@
 // Convert base64 to ArrayBuffer/DataView
-import {fullUUID} from "react-native-ble-plx";
 import {base64ToDataView, getUint24} from "@/components/functions";
-
-
 
 
 // Parse the cycling power measurement
