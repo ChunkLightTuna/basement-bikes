@@ -3,10 +3,67 @@ import {p256} from '@noble/curves/nist.js';
 import {hkdf} from '@noble/hashes/hkdf';
 import {sha256} from '@noble/hashes/sha2';
 import crypto from 'react-native-quick-crypto';
+import {Service} from "react-native-ble-plx";
+import {ZWIFT_CONTROL_POINT_SERVICE, ZWIFT_MEASUREMENT_SERVICE} from "@/components/Bluetooth_UUIDS";
+import {Alert} from "react-native";
+import React from "react";
 
 export const RIDE_ON_HEADER = Buffer.from([0x52, 0x69, 0x64, 0x65, 0x4f, 0x6e, 0x01, 0x02]);
 
-export const decryptZwiftPacket = (
+
+export const handleZwiftHandshake = async (
+    service: Service,
+    setSessionKeys: React.Dispatch<React.SetStateAction<{ [deviceId: string]: Uint8Array<ArrayBufferLike> }>>
+) => {
+    try {
+        const cryptoService = new ZwiftCryptoService()
+        const localRawKey = cryptoService.getRawLocalPublicKey() // Ensure this helper exists in your service
+
+        // 1. Send Handshake: Header + 64-byte Local Pub Key
+        const handshakePacket = Buffer.concat([RIDE_ON_HEADER, Buffer.from(localRawKey)])
+
+        await service.writeCharacteristicWithResponse(
+            ZWIFT_CONTROL_POINT_SERVICE,
+            handshakePacket.toString('base64')
+        )
+
+        // 2. Read Response: Expecting Header + 64-byte Device Pub Key
+        const char = await service.readCharacteristic(
+            ZWIFT_CONTROL_POINT_SERVICE
+        )
+
+        const responseData = Buffer.from(char.value as string, 'base64')
+        const deviceKeyRaw = responseData.slice(8, 72) // Skip "RideOn\x01\x02"
+
+        // 3. Derive 36-byte Session Key (HKDF)
+        const sessionKey = await cryptoService.deriveSessionKey(new Uint8Array(deviceKeyRaw))
+
+        setSessionKeys(prev => ({...prev, [service.deviceID]: sessionKey}))
+        console.log(`Handshake successful`)
+
+        service.monitorCharacteristic(
+            ZWIFT_MEASUREMENT_SERVICE,
+            (error, characteristic) => {
+                if (error) {
+                    console.error(error)
+                    return
+                }
+                if (characteristic?.value) {
+                    const raw = Buffer.from(characteristic.value, 'base64')
+                    const decrypted = decryptZwiftPacket(raw, sessionKey)
+                    console.log("Decrypted Protobuf Payload:", Buffer.from(decrypted).toString('hex'))
+                    // Next step: ControllerNotification.decode(decrypted)
+                }
+            }
+        )
+
+    } catch (e) {
+        console.error("Handshake Failed", e)
+        Alert.alert("Handshake Error", "Could not negotiate encryption with controller")
+    }
+}
+
+const decryptZwiftPacket = (
     encryptedPacket: Buffer,
     sessionKey: Uint8Array
 ): Uint8Array => {
@@ -38,7 +95,7 @@ export const decryptZwiftPacket = (
 }
 
 export class ZwiftCryptoService {
-    private privateKey: Uint8Array;
+    private readonly privateKey: Uint8Array;
     private publicKey: Uint8Array; // 65 bytes (with 0x04 prefix)
 
     constructor() {
@@ -67,7 +124,6 @@ export class ZwiftCryptoService {
         ]);
 
         // 4. Use HKDF-SHA256 to derive the 36-byte key
-        // Note: You may need to install @noble/hashes
         return hkdf(sha256, sharedSecret, salt, undefined, 36);
     }
 }

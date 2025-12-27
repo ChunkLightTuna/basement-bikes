@@ -14,13 +14,12 @@ interface BleContextType {
     updateConnectionState: (deviceId: string, state: ConnectionState) => void;
     scanning: boolean;
     stopScan: () => void;
-    startScan: (services: string[], setDevices: React.Dispatch<React.SetStateAction<Devices>>) => void;
+    startScan: (services: string[], setDevices: React.Dispatch<React.SetStateAction<{ [id: string]: Device }>>) => void;
     toggleDeviceConnection: (device: Device, connectToDevice: (device: Device) => Promise<void>) => Promise<void>;
 }
 
 const BleContext = createContext<BleContextType | undefined>(undefined);
 
-export type Devices = { [deviceId: string]: Device };
 export const BleProvider = ({children}: { children: ReactNode }) => {
     const [manager] = useState(() => new BleManager());
     const [connectionStates, setConnectionStates] = useState<DeviceConnectionState>({});
@@ -55,7 +54,7 @@ export const BleProvider = ({children}: { children: ReactNode }) => {
     }
 
 
-    const startScan = async (services: string[], setDevices: React.Dispatch<React.SetStateAction<Devices>>) => {
+    const startScan = async (services: string[], setDevices: React.Dispatch<React.SetStateAction<{ [id: string]: Device }>>) => {
         const hasPermission = await requestPermissions()
         if (!hasPermission) return
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 import React, {useMemo, useState} from "react"
 import {Button, FlatList} from 'react-native'
-import {Devices, useBle} from "@/components/BleContext";
+import {useBle} from "@/components/BleContext";
 import {BleError, Characteristic, Device, fullUUID,} from "react-native-ble-plx"
 import {ThemedText} from "@/components/ThemedText"
 import {ThemedView} from "@/components/ThemedView"
@@ -31,10 +31,6 @@ const SUPPORTED_SERVICES = [
     CYCLEOPS_SERVICE
 ]
 
-interface DeviceListItem {
-    item: [string, Device]
-}
-
 interface DeviceWattage {
     [key: string]: number
 }
@@ -42,8 +38,6 @@ interface DeviceWattage {
 interface DeviceServices {
     [key: string]: React.JSX.Element[]
 }
-
-// export let SharedContext: Context<BikeTrainer>
 
 const index = () => {
     const {
@@ -60,7 +54,7 @@ const index = () => {
     const [deviceServices, setDeviceServices] = useState<DeviceServices>({})
     const [deviceWattage, setDeviceWattage] = useState<DeviceWattage>({})
 
-    const [devices, setDevices] = useState<Devices>({})
+    const [devices, setDevices] = useState<{ [id: string]: Device }>({})
 
     const onDataUpdateWithName = (device_name: string | null, characteristic_name: string | undefined) => {
         return (
