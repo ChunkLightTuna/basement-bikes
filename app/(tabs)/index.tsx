@@ -20,9 +20,6 @@ import {
 } from "@/components/Bluetooth_UUIDS";
 import {uuid_equals} from "@/components/functions";
 
-import {Buffer} from 'buffer';
-
-global.Buffer = Buffer;
 
 const SUPPORTED_SERVICES = [
     FITNESS_MACHINE_SERVICE,

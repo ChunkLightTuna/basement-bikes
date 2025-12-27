@@ -54,7 +54,10 @@ export const BleProvider = ({children}: { children: ReactNode }) => {
     }
 
 
-    const startScan = async (services: string[], setDevices: React.Dispatch<React.SetStateAction<{ [id: string]: Device }>>) => {
+    const startScan = async (
+        services: string[],
+        setDevices: React.Dispatch<React.SetStateAction<{ [id: string]: Device }>>
+    ) => {
         const hasPermission = await requestPermissions()
         if (!hasPermission) return
 

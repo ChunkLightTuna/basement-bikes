@@ -1,5 +1,6 @@
 import {BleManager, Characteristic, Device} from 'react-native-ble-plx';
 import {useEffect, useState} from 'react';
+import {Buffer} from 'buffer'
 
 
 // FTMS UUID constants
