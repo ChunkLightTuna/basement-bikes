@@ -6,6 +6,7 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "eas-build-pre-install": "cd ios && pod repo update && pod install --repo-update",
     "eas-ios-build": "eas build --platform ios --profile development --non-interactive",
     "eas-android-build": "eas build --platform android --profile development --non-interactive",
     "eas-ios-submit": "eas submit --platform ios",
