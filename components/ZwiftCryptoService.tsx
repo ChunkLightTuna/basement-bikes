@@ -46,7 +46,7 @@ export const handleZwiftHandshake = async (
             ZWIFT_MEASUREMENT_SERVICE,
             (error, characteristic) => {
                 if (error) {
-                    console.error(error)
+                    console.log(error)
                     return
                 }
                 if (characteristic?.value) {
@@ -59,7 +59,7 @@ export const handleZwiftHandshake = async (
         )
 
     } catch (e) {
-        console.error("Handshake Failed", e)
+        console.log("Handshake Failed", e)
         Alert.alert("Handshake Error", "Could not negotiate encryption with controller")
     }
 }

@@ -1,9 +1,9 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform } from 'react-native'
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { HelloWave } from '@/components/HelloWave'
+import ParallaxScrollView from '@/components/ParallaxScrollView'
+import { ThemedText } from '@/components/ThemedText'
+import { ThemedView } from '@/components/ThemedView'
 
 export default function HomeScreen() {
     return (
@@ -51,7 +51,7 @@ export default function HomeScreen() {
                 </ThemedText>
             </ThemedView>
         </ParallaxScrollView>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
         left: 0,
         position: 'absolute',
     },
-});
+})

@@ -1,5 +1,5 @@
-import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
-import {BleManager, Device} from 'react-native-ble-plx';
+import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react'
+import {BleManager, Device} from 'react-native-ble-plx'
 import {ConnectionState, DeviceConnectionState} from '@/components/ConnectionState';
 import {BikeTrainer} from '@/components/BikeTrainer';
 import {requestPermissions} from "@/components/permissions";

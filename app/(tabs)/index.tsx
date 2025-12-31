@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 import React, {useMemo, useState} from "react"
 import {Button, FlatList} from 'react-native'
-import {useBle} from "@/components/BleContext";
+import {useBle} from "@/components/BleContext"
 import {BleError, Characteristic, Device, fullUUID,} from "react-native-ble-plx"
 import {ThemedText} from "@/components/ThemedText"
 import {ThemedView} from "@/components/ThemedView"

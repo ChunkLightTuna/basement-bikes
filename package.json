@@ -6,13 +6,15 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "eas-ios-build": "eas build --platform ios --profile development --non-interactive",
-    "eas-android-build": "eas build --platform android --profile development --non-interactive",
+    "eas-build-ios": "eas build --platform ios --profile development --non-interactive",
+    "eas-build-android": "eas build --platform android --profile development --non-interactive",
+    "eas-build-all": "eas build --platform all --profile development --non-interactive",
     "eas-ios-submit": "eas submit --platform ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "doctor": "npx expo-doctor --verbose"
+    "doctor": "npx expo-doctor --verbose",
+    "postinstall": "patch-package"
   },
   "jest": {
     "preset": "jest-expo"
@@ -49,7 +51,7 @@
     "react-native-nitro-modules": "^0.32.0",
     "react-native-quick-crypto": "^1.0.6",
     "react-native-reanimated": "~3.16.1",
-    "react-native-safe-area-context": "4.12.0",
+    "react-native-safe-area-context": "^4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13"
   },
@@ -65,6 +67,7 @@
     "eslint-config-expo": "~8.0.1",
     "jest": "~29.7.0",
     "jest-expo": "~52.0.6",
+    "patch-package": "^8.0.1",
     "react-native-crypto": "^2.2.1",
     "react-test-renderer": "18.3.1",
     "rn-nodeify": "^10.3.0",
